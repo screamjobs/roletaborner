@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-Br">
+
+<head>
+    <meta charset="UTF-8">
+
+
+
+
+    <script>
+        document.onkeydown = function (e) {
+            if (event.keyCode == 123) {
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+                return false;
+            }
+        }
+    </script>
+
+    <script>
+        function disableselect(e) {
+            return false;
+        }
+
+        function reEnable() {
+            return true;
+        }
+
+        document.onselectstart = new Function("return false");
+
+        if (window.sidebar) {
+            document.onmousedown = disableselect;
+            document.onclick = reEnable;
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="images/favicon.png">
+    <link rel="shortcut icon" href="images/favicon.png">
+    <title>Borner - Gire a Roleta!</title>
+    <link rel="stylesheet" href="css/all.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/stylead8ead8e.css">
+    <script src="js/jquery-3.0.0.slim.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/confetti.browser.min.js"></script>
+</head>
+
+<body>
+    <div id="loading-screen" style="display: none;">
+        <div class="spinner-loading"></div>
+    </div>
+
+    <div id="page-content">
+        <section>
+            <div style="margin-bottom: 60px;" class="cta">
+                <h1>
+                </h1>
+            </div>
+            <div class="roulette">
+                <img src="#" id="roleta1">
+                <div id="roleta2">
+                    <img src="images/roleta.png" class="spinner">
+                </div>
+                <img src="images/button-gire.png" id="roleta3">
+            </div>
+            <div class="button-roulette">
+                <button id="button-cta" class="runSpin">
+                    GIRE PARA GANHAR
+                </button>
+            </div>
+        </section>
+    </div>
+
+
+
+    <div id="overlay" class="overlay"></div>
+    <div id="popup-try-again" class="popup">
+        <div class="popup-content">
+            <h2>Parabéns!</h2>
+            <img src="images/star-struck.png">
+            <p> Você ganhou 5% de desconto. Gire novamente para tentar ganhar um prêmio ainda maior!</p>
+            <button id="try-again-button">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+    <div id="popup-plus" class="popup">
+        <div class="popup-content">
+            <h2>+1 Giro</h2>
+            <img src="images/sweat.png">
+            <p>Você ganhou um novo giro não desanime 🍀🍀</p>
+            <button id="try-again-button-plus">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2>Parabénsssss!</h2>
+            <img src="images/star-struck.png">
+            <p>Você acaba de ganhar 75% de desconto em todos os produtos!<b></b>!</p>
+            <button id="resgatar-premio" href="https://www.bornerbrasil.com/">Resgatar seu Prêmio</button>
+        </div>
+    </div>
+    <audio id="confetti-audio" src="audio/tada.mp3"></audio>
+
+    <script>
+        let attempt = 0; // Variável para contar as tentativas
+
+        const animateSpin = () => {
+            const roleta2 = document.querySelector('#roleta2');
+            const roleta2Img = document.querySelector('#roleta2 img');
+            const buttonCta = document.getElementById('button-cta');
+            const confettiAudio = document.getElementById('confetti-audio');
+
+            if (roleta2) {
+                // Removendo classes de animações anteriores
+                roleta2Img.classList.remove('spinner', 'wheel__spinner_animated_retry_then_win', 'wheel__spinner_animated', 'wheel__spinner_animated2');
+                buttonCta.style.display = 'none'; // Esconder o botão ao girar
+
+                // Verificando a tentativa e alternando entre os resultados
+                if (attempt % 3 === 0) {
+                    // Animação para "tente novamente"
+                    const animatedClass = 'wheel__spinner_animated_retry_then_win';
+                    roleta2.classList.add(animatedClass);
+
+                    // Mostrar popup de "tente novamente" após a rotação
+                    setTimeout(() => {
+                        const overlay = document.getElementById('overlay');
+                        const tryAgainPopup = document.getElementById('popup-try-again');
+                        overlay.style.display = 'block';
+                        tryAgainPopup.style.display = 'block';
+                    }, 10000); // 9 segundos de rotação antes de mostrar o popup
+                } else if (attempt % 3 === 1) {
+                    // Animação para "quase ganhou"
+                    const animatedClass = 'wheel__spinner_animated2';
+                    roleta2.classList.add(animatedClass);
+
+                    // Mostrar popup de "quase ganhou" após a rotação
+                    setTimeout(() => {
+                        const overlay = document.getElementById('overlay');
+                        const almostPopup = document.getElementById('popup-plus');
+                        overlay.style.display = 'block';
+                        almostPopup.style.display = 'block';
+                    }, 10000); // 9 segundos de rotação antes de mostrar o popup
+                } else {
+                    // Animação para "ganhou"
+                    const animatedClass = 'wheel__spinner_animated';
+                    roleta2.classList.add(animatedClass);
+
+                    // Mostrar popup de "ganhou" após a rotação
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+
+                        confettiAudio.play();
+
+                        // Mostrar o overlay e o popup
+                        const overlay = document.getElementById('overlay');
+                        const popup = document.getElementById('popup');
+                        overlay.style.display = 'block';
+                        popup.style.display = 'block';
+
+                        buttonCta.classList.add('hide-me');
+                    }, 9000);
+                }
+
+                attempt++; // Incrementar a tentativa após cada rotação
+            }
+        };
+
+        // Adicionar evento para girar a roleta
+        document.querySelectorAll('.runSpin').forEach(element => {
+            element.addEventListener('click', animateSpin);
+        });
+
+        // Reiniciar o jogo ao clicar no botão de "tente novamente"
+        document.getElementById('try-again-button').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            const tryAgainPopup = document.getElementById('popup-try-again');
+            overlay.style.display = 'none';
+            tryAgainPopup.style.display = 'none';
+
+
+            const roleta2 = document.querySelector('#roleta2');
+            roleta2.classList.remove('wheel__spinner_animated_retry_then_win', 'wheel__spinner_animated', 'wheel__spinner_animated2');
+
+            const buttonCta = document.getElementById('button-cta');
+            buttonCta.style.display = 'block';
+        });
+        // Reiniciar o jogo ao clicar no botão "Tentar Novamente" do segundo popup
+        document.getElementById('try-again-button-plus').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            const plusPopup = document.getElementById('popup-plus');
+            overlay.style.display = 'none';
+            plusPopup.style.display = 'none';
+
+            const roleta2 = document.querySelector('#roleta2');
+            roleta2.classList.remove('wheel__spinner_animated_retry_then_win', 'wheel__spinner_animated', 'wheel__spinner_animated2');
+
+            const buttonCta = document.getElementById('button-cta');
+            buttonCta.style.display = 'block';
+        });
+
+
+
+        // Função para obter todos os parâmetros da URL
+        const getQueryParams = () => {
+            const params = new URLSearchParams(window.location.search);
+            return params.toString();
+        };
+
+        // Event listener for the resgatar button
+        document.getElementById('resgatar-premio').addEventListener('click', () => {
+            // Logic to redeem the prize
+            const queryParams = getQueryParams();
+            const baseUrl = 'https://www.bornerbrasil.com/';
+            const redirectUrl = queryParams ? `${baseUrl}?${queryParams}` : baseUrl;
+            window.location.href = redirectUrl;
+        });
+
+        window.addEventListener('load', function () {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.display = 'none';
+        });
+    </script>
+
+</body>
+<!-- Mirrored from brasil-novas-noticias.online/01/responda/roleta/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 Aug 2024 12:44:40 GMT -->
+
+</html>
